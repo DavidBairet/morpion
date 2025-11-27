@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jeu de Morpion</title>
+
+  <!-- Feuille de styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Script du jeu -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Jeu de Morpion</h1>
+
+    <div class="status" id="status" aria-live="polite">
+      Au tour de X (Joueur vs Joueur)
+    </div>
+
+    <div class="mode-select">
+      <button id="mode-pvp" class="mode-btn mode-active">Joueur vs Joueur</button>
+      <button id="mode-pvai" class="mode-btn">Joueur vs IA</button>
+    </div>
+
+    <div class="board" id="board">
+      <button class="cell" data-index="0" aria-label="Case 1"></button>
+      <button class="cell" data-index="1" aria-label="Case 2"></button>
+      <button class="cell" data-index="2" aria-label="Case 3"></button>
+      <button class="cell" data-index="3" aria-label="Case 4"></button>
+      <button class="cell" data-index="4" aria-label="Case 5"></button>
+      <button class="cell" data-index="5" aria-label="Case 6"></button>
+      <button class="cell" data-index="6" aria-label="Case 7"></button>
+      <button class="cell" data-index="7" aria-label="Case 8"></button>
+      <button class="cell" data-index="8" aria-label="Case 9"></button>
+    </div>
+
+    <div class="controls">
+      <button id="reset">Nouvelle partie</button>
+      <button id="resetScores">Réinitialiser les scores</button>
+    </div>
+
+    <div class="scores">
+      <div class="score-item">
+        <span class="score-label">X :</span>
+        <span class="score-value x-score" id="scoreX">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">O :</span>
+        <span class="score-value o-score" id="scoreO">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-label">Nuls :</span>
+        <span class="score-value draw-score" id="scoreDraw">0</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
