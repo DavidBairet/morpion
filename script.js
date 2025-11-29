@@ -15,6 +15,29 @@ const chooseOBtn = document.getElementById("choose-o");
 const scoreBoxX = document.getElementById("score-box-x");
 const scoreBoxO = document.getElementById("score-box-o");
 
+// Sons
+const sClick = new Audio("sounds/click.wav");
+const sWin = new Audio("sounds/win.wav");
+const sDraw = new Audio("sounds/draw.wav");
+const sHover = new Audio("sounds/hover.wav");
+// Volumes équilibrés
+sClick.volume = 0.35;
+sWin.volume = 0.55;
+sDraw.volume = 0.25;
+sHover.volume = 0.12; // hover ultra léger
+
+// Helper pour jouer un son proprement
+function playSound(audio) {
+  if (!audio) return;
+  audio.currentTime = 0;
+  const p = audio.play();
+  if (p && typeof p.catch === "function") {
+    p.catch(() => {
+      // ignore les erreurs (ex: autoplay bloqué)
+    });
+  }
+}
+
 // Joueurs (variables car on peut choisir X ou O)
 let HUMAN_PLAYER = "X";
 let AI_PLAYER = "O";
@@ -90,7 +113,8 @@ function drawLaser(pattern) {
   line.style.width = length + "px";
   line.style.left = x1 + "px";
   line.style.top = y1 + "px";
-  line.style.transform = `rotate(${angle}deg)`;
+  line.style.setProperty("--angle", `${angle}deg`);
+
 
   laser.appendChild(line);
 }
@@ -224,6 +248,9 @@ function makeMove(index) {
   cell.textContent = currentPlayer;
   cell.classList.add("taken", currentPlayer.toLowerCase());
 
+  // Son de clic à chaque pose de pion (humain + IA)
+  playSound(sClick);
+
   // petite anim
   cell.classList.remove("placed");
   void cell.offsetWidth;
@@ -238,6 +265,7 @@ function makeMove(index) {
     updateScores();
     highlightWinner(winningPattern);
     drawLaser(winningPattern); // laser sur la ligne gagnante
+    playSound(sWin); // son de victoire
     updateActivePlayerIndicator();
     return false;
   }
@@ -247,6 +275,7 @@ function makeMove(index) {
     gameActive = false;
     scores.draw++;
     updateScores();
+    playSound(sDraw); // son de match nul
     updateActivePlayerIndicator();
     return false;
   }
@@ -314,6 +343,16 @@ function chooseSymbol(symbol) {
 
 // Écouteurs d'événements
 cells.forEach((cell) => cell.addEventListener("click", handleCellClick));
+
+// Son au survol des cases libres
+cells.forEach((cell) => {
+  cell.addEventListener("mouseenter", () => {
+    if (!cell.classList.contains("taken") && gameActive) {
+      playSound(sHover);
+    }
+  });
+});
+
 resetBtn.addEventListener("click", resetGame);
 resetScoresBtn.addEventListener("click", resetScores);
 modePvpBtn.addEventListener("click", () => setMode("pvp"));
