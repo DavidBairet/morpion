@@ -57,6 +57,44 @@ function highlightWinner(pattern) {
   });
 }
 
+// Dessine le laser de victoire (aligné sur les cases gagnantes)
+function drawLaser(pattern) {
+  const laser = document.getElementById("laser");
+  if (!laser) return;
+
+  laser.innerHTML = ""; // reset laser
+
+  const line = document.createElement("div");
+  line.classList.add("laser-line");
+
+  const boardRect = document.querySelector(".board").getBoundingClientRect();
+  const rect0 = cells[pattern[0]].getBoundingClientRect();
+  const rect2 = cells[pattern[2]].getBoundingClientRect();
+
+  // Coordonnées des centres des cases, RELATIVES à la board
+  const x1 = rect0.left + rect0.width / 2 - boardRect.left;
+  const y1 = rect0.top + rect0.height / 2 - boardRect.top;
+
+  const x2 = rect2.left + rect2.width / 2 - boardRect.left;
+  const y2 = rect2.top + rect2.height / 2 - boardRect.top;
+
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const length = Math.sqrt(dx * dx + dy * dy);
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+  // On affiche le laser
+  laser.style.opacity = "1";
+
+  // Positionner la ligne
+  line.style.width = length + "px";
+  line.style.left = x1 + "px";
+  line.style.top = y1 + "px";
+  line.style.transform = `rotate(${angle}deg)`;
+
+  laser.appendChild(line);
+}
+
 // Met à jour l'affichage des scores
 function updateScores() {
   scoreX.textContent = scores.X;
@@ -64,7 +102,7 @@ function updateScores() {
   scoreDraw.textContent = scores.draw;
 }
 
-// Indicateur joueur actif (optionnel mais cool)
+// Indicateur joueur actif
 function updateActivePlayerIndicator() {
   if (!gameActive) {
     scoreBoxX.classList.remove("active");
@@ -105,6 +143,13 @@ function resetGame() {
     cell.textContent = "";
     cell.classList.remove("taken", "x", "o", "winner", "placed");
   });
+
+  // Nettoyer le laser
+  const laser = document.getElementById("laser");
+  if (laser) {
+    laser.innerHTML = "";
+    laser.style.opacity = "0";
+  }
 
   updateStatusLabel();
   updateActivePlayerIndicator();
@@ -192,6 +237,7 @@ function makeMove(index) {
     scores[currentPlayer]++;
     updateScores();
     highlightWinner(winningPattern);
+    drawLaser(winningPattern); // laser sur la ligne gagnante
     updateActivePlayerIndicator();
     return false;
   }
