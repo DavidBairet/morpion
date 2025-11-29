@@ -6,6 +6,7 @@
                0 0 40px rgba(150, 100, 255, 0.3);
 }
 
+/* Reset de base */
 * {
   margin: 0;
   padding: 0;
@@ -61,7 +62,7 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   flex-wrap: wrap;
 }
 
@@ -87,6 +88,44 @@ h1 {
 }
 
 .mode-btn.mode-active {
+  background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+  color: white;
+  box-shadow:
+    0 0 15px var(--neon-purple),
+    0 0 30px var(--neon-blue);
+}
+
+/* Choix du symbole */
+.symbol-select {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.symbol-btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e6e6ff;
+  border: 1px solid var(--neon-blue);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.2s ease-out;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.symbol-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 12px var(--neon-blue),
+    0 0 24px var(--neon-purple);
+  transform: translateY(-2px);
+}
+
+.symbol-btn.symbol-active {
   background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
   color: white;
   box-shadow:
@@ -124,12 +163,13 @@ h1 {
   box-shadow: 0 0 10px rgba(130, 100, 255, 0.25);
 }
 
+/* Hover discret pour ne pas masquer X / O */
 .cell:hover:not(.taken) {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.08);
+  background: transparent;
+  transform: scale(1.015);
   box-shadow:
-    0 0 18px var(--neon-blue),
-    0 0 32px var(--neon-purple);
+    0 0 8px rgba(120, 90, 255, 0.45),
+    inset 0 0 6px rgba(120, 90, 255, 0.30);
 }
 
 .cell.taken {
@@ -174,7 +214,8 @@ h1 {
   margin-bottom: 20px;
 }
 
-button {
+/* Uniquement les boutons de contrôle, pas les cases du plateau */
+.controls button {
   background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
   color: white;
   border: none;
@@ -187,7 +228,7 @@ button {
   box-shadow: var(--neon-glow);
 }
 
-button:hover {
+.controls button:hover {
   background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
   transform: translateY(-3px) scale(1.03);
   box-shadow:

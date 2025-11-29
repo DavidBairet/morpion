@@ -10,10 +10,14 @@ const scoreO = document.getElementById("scoreO");
 const scoreDraw = document.getElementById("scoreDraw");
 const modePvpBtn = document.getElementById("mode-pvp");
 const modePvaiBtn = document.getElementById("mode-pvai");
+const chooseXBtn = document.getElementById("choose-x");
+const chooseOBtn = document.getElementById("choose-o");
+const scoreBoxX = document.getElementById("score-box-x");
+const scoreBoxO = document.getElementById("score-box-o");
 
-// Constantes pour les joueurs
-const HUMAN_PLAYER = "X";
-const AI_PLAYER = "O";
+// Joueurs (variables car on peut choisir X ou O)
+let HUMAN_PLAYER = "X";
+let AI_PLAYER = "O";
 
 // État du jeu
 let board = ["", "", "", "", "", "", "", "", ""];
@@ -21,6 +25,7 @@ let currentPlayer = HUMAN_PLAYER;
 let gameActive = true;
 let scores = { X: 0, O: 0, draw: 0 };
 let mode = "pvp"; // 'pvp' ou 'pvai'
+let humanStartsNext = true; // pour alterner en PvAI
 
 // Combinaisons gagnantes
 const winPatterns = [
@@ -59,25 +64,55 @@ function updateScores() {
   scoreDraw.textContent = scores.draw;
 }
 
+// Indicateur joueur actif (optionnel mais cool)
+function updateActivePlayerIndicator() {
+  if (!gameActive) {
+    scoreBoxX.classList.remove("active");
+    scoreBoxO.classList.remove("active");
+    return;
+  }
+  scoreBoxX.classList.toggle("active", currentPlayer === "X");
+  scoreBoxO.classList.toggle("active", currentPlayer === "O");
+}
+
 // Met à jour le texte de statut
 function updateStatusLabel() {
   if (!gameActive) return;
   const modeText = mode === "pvai" ? " (Joueur vs IA)" : " (Joueur vs Joueur)";
-  status.textContent = `Au tour de ${currentPlayer}${modeText}`;
+
+  if (mode === "pvai" && currentPlayer === AI_PLAYER) {
+    status.textContent = `Au tour de l'IA (${AI_PLAYER})${modeText}`;
+  } else {
+    status.textContent = `Au tour de ${currentPlayer}${modeText}`;
+  }
 }
 
 // Réinitialise uniquement la partie
 function resetGame() {
   board = ["", "", "", "", "", "", "", "", ""];
-  currentPlayer = HUMAN_PLAYER;
   gameActive = true;
+
+  if (mode === "pvai") {
+    // En PvAI on alterne qui commence (humain / IA)
+    currentPlayer = humanStartsNext ? HUMAN_PLAYER : AI_PLAYER;
+    humanStartsNext = !humanStartsNext;
+  } else {
+    // En PvP, le joueur humain (X ou O) commence toujours
+    currentPlayer = HUMAN_PLAYER;
+  }
 
   cells.forEach((cell) => {
     cell.textContent = "";
-    cell.classList.remove("taken", "x", "o", "winner");
+    cell.classList.remove("taken", "x", "o", "winner", "placed");
   });
 
   updateStatusLabel();
+  updateActivePlayerIndicator();
+
+  // Si c'est l'IA qui commence, elle joue automatiquement
+  if (mode === "pvai" && currentPlayer === AI_PLAYER) {
+    setTimeout(playAiTurn, 400);
+  }
 }
 
 // Réinitialise scores + partie
@@ -144,27 +179,35 @@ function makeMove(index) {
   cell.textContent = currentPlayer;
   cell.classList.add("taken", currentPlayer.toLowerCase());
 
+  // petite anim
+  cell.classList.remove("placed");
+  void cell.offsetWidth;
+  cell.classList.add("placed");
+
   const winningPattern = getWinningPattern(board);
 
   if (winningPattern) {
-    status.textContent = `${currentPlayer} a gagné !`;
+    status.textContent = `${currentPlayer} a gagné ! Clique sur "Nouvelle partie" pour rejouer.`;
     gameActive = false;
     scores[currentPlayer]++;
     updateScores();
     highlightWinner(winningPattern);
+    updateActivePlayerIndicator();
     return false;
   }
 
   if (board.every((cell) => cell !== "")) {
-    status.textContent = "Match nul !";
+    status.textContent = `Match nul ! Clique sur "Nouvelle partie" pour rejouer.`;
     gameActive = false;
     scores.draw++;
     updateScores();
+    updateActivePlayerIndicator();
     return false;
   }
 
   currentPlayer = currentPlayer === HUMAN_PLAYER ? AI_PLAYER : HUMAN_PLAYER;
   updateStatusLabel();
+  updateActivePlayerIndicator();
   return true;
 }
 
@@ -178,6 +221,8 @@ function playAiTurn() {
 // Gestion du clic sur une case
 function handleCellClick(e) {
   if (!gameActive) return;
+
+  // en PvAI, on bloque les clics quand c'est au tour de l'IA
   if (mode === "pvai" && currentPlayer !== HUMAN_PLAYER) return;
 
   const index = e.target.dataset.index;
@@ -195,6 +240,29 @@ function setMode(newMode) {
   mode = newMode;
   modePvpBtn.classList.toggle("mode-active", mode === "pvp");
   modePvaiBtn.classList.toggle("mode-active", mode === "pvai");
+
+  if (mode === "pvai") {
+    humanStartsNext = true; // on repart avec humain qui commence, puis on alterne
+  }
+
+  resetGame();
+}
+
+// Choix du symbole (X ou O)
+function chooseSymbol(symbol) {
+  if (symbol === "X") {
+    HUMAN_PLAYER = "X";
+    AI_PLAYER = "O";
+    chooseXBtn.classList.add("symbol-active");
+    chooseOBtn.classList.remove("symbol-active");
+  } else {
+    HUMAN_PLAYER = "O";
+    AI_PLAYER = "X";
+    chooseOBtn.classList.add("symbol-active");
+    chooseXBtn.classList.remove("symbol-active");
+  }
+
+  // On garde la logique d'alternance, mais on repart proprement
   resetGame();
 }
 
@@ -204,7 +272,10 @@ resetBtn.addEventListener("click", resetGame);
 resetScoresBtn.addEventListener("click", resetScores);
 modePvpBtn.addEventListener("click", () => setMode("pvp"));
 modePvaiBtn.addEventListener("click", () => setMode("pvai"));
+chooseXBtn.addEventListener("click", () => chooseSymbol("X"));
+chooseOBtn.addEventListener("click", () => chooseSymbol("O"));
 
 // Initialisation
 updateStatusLabel();
 updateScores();
+updateActivePlayerIndicator();

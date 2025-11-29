@@ -24,6 +24,12 @@
       <button id="mode-pvai" class="mode-btn">Joueur vs IA</button>
     </div>
 
+    <!-- Choix du symbole -->
+    <div class="symbol-select">
+      <button id="choose-x" class="symbol-btn symbol-active">Jouer X</button>
+      <button id="choose-o" class="symbol-btn">Jouer O</button>
+    </div>
+
     <div class="board" id="board">
       <button class="cell" data-index="0" aria-label="Case 1"></button>
       <button class="cell" data-index="1" aria-label="Case 2"></button>
@@ -42,11 +48,11 @@
     </div>
 
     <div class="scores">
-      <div class="score-item">
+      <div class="score-item" id="score-box-x">
         <span class="score-label">X :</span>
         <span class="score-value x-score" id="scoreX">0</span>
       </div>
-      <div class="score-item">
+      <div class="score-item" id="score-box-o">
         <span class="score-label">O :</span>
         <span class="score-value o-score" id="scoreO">0</span>
       </div>
