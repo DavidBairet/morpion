@@ -120,3 +120,4 @@ Forkez le repo, améliorez la logique, proposez une meilleure IA ou un design pl
 
 Libre et réutilisable pour l’apprentissage.
 Tu peux modifier, partager, ou t’en inspirer pour tes propres projets.
+https://creativecommons.org/publicdomain/zero/1.0/
