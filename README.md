@@ -109,7 +109,8 @@ Je peux t’aider à créer une IA imbattable si tu veux.
 
 📸 Aperçu du jeu
 
-(Image ou GIF à ajouter lorsque tu veux — je peux t’en faire un)
+<img width="691" height="877" alt="image" src="https://github.com/user-attachments/assets/ca469a41-d256-4e03-b36c-384fe41ed26e" />
+
 
 🤝 Contribution
 
